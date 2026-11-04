@@ -1,0 +1,30 @@
+{% extends "comptabilite/base.html" %}
+{% load compta %}
+{% block title %}Grand livre{% endblock %}
+{% block content %}
+<h2>Grand livre</h2>
+<form class="filters" method="get">
+  <select name="compte" onchange="this.form.submit()">
+    <option value="">Choisir un compte…</option>
+    {% for c in comptes %}<option value="{{ c.compte }}" {% if c.compte == compte %}selected{% endif %}>{{ c.compte }} – {{ c.intitule }}</option>{% endfor %}
+  </select>
+  <button>Afficher</button>
+</form>
+{% if page %}
+<table>
+  <tr><th>Date</th><th>Jnl</th><th>Pièce</th><th>Libellé</th><th class="num">Débit</th><th class="num">Crédit</th><th class="num">Cumul</th></tr>
+  {% for l in page %}
+  <tr>
+    <td>{{ l.e.date|date:"d/m/Y" }}</td><td>{{ l.e.journal }}</td><td>{{ l.e.piece }}</td><td>{{ l.e.libelle }}</td>
+    <td class="num">{{ l.e.debit|montant }}</td><td class="num">{{ l.e.credit|montant }}</td><td class="num">{{ l.cumul|montant }}</td>
+  </tr>
+  {% endfor %}
+  {% if totaux %}<tr><th colspan="4">Total</th><th class="num">{{ totaux.debit|montant }}</th><th class="num">{{ totaux.credit|montant }}</th><th class="num">{{ totaux.solde|montant }}</th></tr>{% endif %}
+</table>
+<div class="pager">
+  {% if page.has_previous %}<a href="?compte={{ compte }}&page={{ page.previous_page_number }}">← Précédent</a>{% endif %}
+  Page {{ page.number }} / {{ page.paginator.num_pages }}
+  {% if page.has_next %}<a href="?compte={{ compte }}&page={{ page.next_page_number }}">Suivant →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

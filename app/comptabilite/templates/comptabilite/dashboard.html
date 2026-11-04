@@ -1,0 +1,35 @@
+{% extends "comptabilite/base.html" %}
+{% load compta %}
+{% block content %}
+<h2>Tableau de bord</h2>
+<div class="cards">
+  <div class="card"><small>Écritures</small><strong>{{ nb_ecritures }}</strong></div>
+  <div class="card"><small>Comptes</small><strong>{{ nb_comptes }}</strong></div>
+  <div class="card"><small>Total débit</small><strong>{{ total_debit|montant }}</strong></div>
+  <div class="card"><small>Total crédit</small><strong>{{ total_credit|montant }}</strong></div>
+  <div class="card"><small>Produits</small><strong>{{ total_produits|montant }}</strong></div>
+  <div class="card"><small>Charges</small><strong>{{ total_charges|montant }}</strong></div>
+  <div class="card"><small>Résultat</small><strong class="{% if resultat >= 0 %}pos{% else %}neg{% endif %}">{{ resultat|montant }}</strong></div>
+</div>
+
+<h3>Produits et charges par mois</h3>
+<table>
+  <tr><th>Mois</th><th style="width:40%">Produits (vert) / Charges (rouge)</th><th class="num">Produits</th><th class="num">Charges</th></tr>
+  {% for m in mois %}
+  <tr>
+    <td>{{ m.mois }}</td>
+    <td><div class="bar p" style="width:{{ m.pc_produits }}%"></div><div class="bar c" style="width:{{ m.pc_charges }}%"></div></td>
+    <td class="num">{{ m.produits|montant }}</td>
+    <td class="num">{{ m.charges|montant }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Soldes par classe de comptes</h3>
+<table>
+  <tr><th>Classe</th><th>Libellé</th><th class="num">Débit</th><th class="num">Crédit</th><th class="num">Solde (D-C)</th></tr>
+  {% for c in classes %}
+  <tr><td>{{ c.classe }}</td><td>{{ c.libelle }}</td><td class="num">{{ c.debit|montant }}</td><td class="num">{{ c.credit|montant }}</td><td class="num">{{ c.solde|montant }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

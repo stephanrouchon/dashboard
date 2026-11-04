@@ -1,0 +1,37 @@
+{% load compta %}
+<div class="scroll">
+<table>
+  <tr>
+    <th>Compte</th><th>Intitulé</th>
+    {% for m in mois %}<th class="num">{{ m }}</th>{% endfor %}
+    <th class="num">Total</th>
+  </tr>
+  {% for s in sections %}
+  <tr class="total"><th colspan="{{ mois|length|add:3 }}">{{ s.titre }}</th></tr>
+  {% for g in s.groupes %}
+  {% for l in g.lignes %}
+  <tr>
+    <td>{{ l.compte }}</td><td>{{ l.intitule }}</td>
+    {% for v in l.valeurs %}<td class="num">{{ v|montant }}</td>{% endfor %}
+    <td class="num"><strong>{{ l.total|montant }}</strong></td>
+  </tr>
+  {% endfor %}
+  <tr class="sub">
+    <td colspan="2">Sous-total {{ g.code }}</td>
+    {% for t in g.totaux %}<td class="num">{{ t|montant }}</td>{% endfor %}
+    <td class="num">{{ g.total|montant }}</td>
+  </tr>
+  {% endfor %}
+  <tr class="total">
+    <td colspan="2">Total {{ s.titre|lower }}</td>
+    {% for t in s.totaux %}<td class="num">{{ t|montant }}</td>{% endfor %}
+    <td class="num">{{ s.total|montant }}</td>
+  </tr>
+  {% endfor %}
+  <tr class="result">
+    <td colspan="2">Résultat (produits − charges)</td>
+    {% for r in resultats %}<td class="num">{{ r|montant }}</td>{% endfor %}
+    <td class="num">{{ resultat_total|montant }}</td>
+  </tr>
+</table>
+</div>

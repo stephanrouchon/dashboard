@@ -1,0 +1,3 @@
+No global/local python version has been set yet. Please set the global/local version by typing:
+pyenv global 3.7.4
+pyenv local 3.7.4

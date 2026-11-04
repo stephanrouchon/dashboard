@@ -1,0 +1,30 @@
+{% extends "comptabilite/base.html" %}
+{% load compta %}
+{% block title %}Trésorerie{% endblock %}
+{% block content %}
+<h2>Évolution de la trésorerie</h2>
+<div class="cards">
+  <div class="card"><small>Solde actuel</small><strong>{{ solde|montant }}</strong></div>
+  <div class="card"><small>Plus bas</small><strong>{{ minimum|montant }}</strong></div>
+  <div class="card"><small>Plus haut</small><strong>{{ maximum|montant }}</strong></div>
+</div>
+{% if graphique %}
+<div class="card">
+  <svg viewBox="0 0 {{ graphique.largeur }} {{ graphique.hauteur }}" style="width:100%;height:auto">
+    {% for g in graphique.graduations %}
+    <line x1="{{ graphique.axe_x }}" x2="{{ graphique.fin_x }}" y1="{{ g.y }}" y2="{{ g.y }}" stroke="#e5e7eb"/>
+    <text x="{{ graphique.axe_x|add:-8 }}" y="{{ g.y }}" text-anchor="end" dominant-baseline="middle" font-size="11" fill="#555">{{ g.valeur|montant }}</text>
+    {% endfor %}
+    <line x1="{{ graphique.axe_x }}" x2="{{ graphique.fin_x }}" y1="{{ graphique.zero_y }}" y2="{{ graphique.zero_y }}" stroke="#999" stroke-dasharray="4"/>
+    <polyline points="{{ graphique.ligne }}" fill="none" stroke="#3b82f6" stroke-width="2"/>
+    {% for m in graphique.mois %}
+    <circle cx="{{ m.x }}" cy="{{ m.y }}" r="4" fill="#3b82f6"><title>{{ m.label }} : {{ m.valeur|montant }}</title></circle>
+    <text x="{{ m.x }}" y="{{ graphique.hauteur|add:-8 }}" text-anchor="middle" font-size="10" fill="#555">{{ m.label }}</text>
+    {% endfor %}
+  </svg>
+  <small>Solde cumulé des comptes de classe 5 (banques, caisse), à la date de chaque mouvement. Les points marquent la fin de chaque mois.</small>
+</div>
+{% else %}
+<p>Aucun mouvement de trésorerie.</p>
+{% endif %}
+{% endblock %}

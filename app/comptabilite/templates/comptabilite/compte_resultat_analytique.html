@@ -1,0 +1,40 @@
+{% extends "comptabilite/base.html" %}
+{% load compta %}
+{% block title %}Résultat analytique{% endblock %}
+{% block content %}
+<h2>Compte de résultat par plan et poste analytique</h2>
+<form class="filters" method="get">
+  <select name="plan" onchange="this.form.poste.value='';this.form.submit()">
+    <option value="">Tous les plans</option>
+    {% for p in plans %}<option value="{{ p }}" {% if p == plan %}selected{% endif %}>Plan {{ p|default:"(non affecté)" }}</option>{% endfor %}
+  </select>
+  <select name="poste" onchange="this.form.submit()">
+    <option value="">Tous les postes</option>
+    {% for p in postes %}<option value="{{ p }}" {% if p == poste %}selected{% endif %}>{{ p|default:"(non affecté)" }}</option>{% endfor %}
+  </select>
+  <button>Filtrer</button>
+</form>
+
+<h3>Synthèse</h3>
+<table>
+  <tr><th>Plan</th><th>Poste</th><th class="num">Produits</th><th class="num">Charges</th><th class="num">Résultat</th></tr>
+  {% for g in par_plan %}
+  {% for s in g.postes %}
+  <tr>
+    <td>{{ s.plan|default:"(non affecté)" }}</td>
+    <td><a href="?plan={{ s.plan|urlencode }}&poste={{ s.poste|urlencode }}">{{ s.poste|default:"(non affecté)" }}</a></td>
+    <td class="num">{{ s.produits|montant }}</td><td class="num">{{ s.charges|montant }}</td>
+    <td class="num {% if s.resultat < 0 %}neg{% else %}pos{% endif %}">{{ s.resultat|montant }}</td>
+  </tr>
+  {% endfor %}
+  <tr class="sub">
+    <td colspan="2">Sous-total plan {{ g.plan|default:"(non affecté)" }}</td>
+    <td class="num">{{ g.produits|montant }}</td><td class="num">{{ g.charges|montant }}</td><td class="num">{{ g.resultat|montant }}</td>
+  </tr>
+  {% empty %}<tr><td colspan="5">Aucune donnée.</td></tr>
+  {% endfor %}
+</table>
+
+<h3>Détail mensuel{% if plan %} – plan {{ plan }}{% endif %}{% if poste %} / {{ poste }}{% endif %}</h3>
+{% include "comptabilite/_tableau_resultat.html" %}
+{% endblock %}

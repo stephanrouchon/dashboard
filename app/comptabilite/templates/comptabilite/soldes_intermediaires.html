@@ -1,0 +1,32 @@
+{% extends "comptabilite/base.html" %}
+{% load compta %}
+{% block title %}Soldes intermédiaires de gestion{% endblock %}
+{% block content %}
+<h2>Soldes intermédiaires de gestion</h2>
+<p>Calculs mensuels et cumulés à partir des comptes généraux du plan comptable.</p>
+<div class="scroll">
+  <table>
+    <tr>
+      <th>Solde</th><th>Calcul</th>
+      {% for m in mois %}<th class="num">{{ m }}</th>{% endfor %}
+      <th class="num">Total</th>
+    </tr>
+    {% if mois %}
+    {% for s in soldes %}
+    <tr {% if forloop.last %}class="result"{% elif forloop.counter|divisibleby:2 %}class="sub"{% endif %}>
+      <td>{{ s.libelle }}</td><td>{{ s.formule }}</td>
+      {% for v in s.valeurs %}<td class="num">{{ v|montant }}</td>{% endfor %}
+      <td class="num">{{ s.total|montant }}</td>
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr><td colspan="3">Aucune écriture de charges ou de produits.</td></tr>
+    {% endif %}
+  </table>
+</div>
+<p><small>
+  Les comptes 681/781/791, 686/786/796 et 687/787/797 sont respectivement
+  rattachés aux résultats d'exploitation, financier et exceptionnel.
+  Vérifiez les rattachements en cas de plan de comptes spécifique.
+</small></p>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "comptabilite/base.html" %}
+{% load compta %}
+{% block title %}Journaux{% endblock %}
+{% block content %}
+<h2>Journaux</h2>
+<table>
+  <tr><th>Code</th><th>Libellé</th><th class="num">Écritures</th><th class="num">Débit</th><th class="num">Crédit</th></tr>
+  {% for j in journaux %}
+  <tr><td>{{ j.code }}</td><td>{{ j.libelle }}</td><td class="num">{{ j.nb }}</td><td class="num">{{ j.debit|montant }}</td><td class="num">{{ j.credit|montant }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
